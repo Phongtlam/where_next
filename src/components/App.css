@@ -1,0 +1,16 @@
+.app {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.search {
+  margin: 3px;
+}
+
+.search-box {
+  width: 300px;
+}
+
+.search-button {
+  float: left;
+  margin: 3px;
+}
