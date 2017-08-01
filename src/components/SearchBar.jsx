@@ -6,6 +6,15 @@ class SearchBar extends React.Component {
     this.state = {
       input: '',
     };
+    this.onSearch = this.onSearch.bind(this);
+  }
+
+  componentWillMount() {
+    // var searchBox = new window.google.maps.places.SearchBox()
+  }
+
+  onSearch() {
+
   }
 
   render() {
@@ -18,12 +27,12 @@ class SearchBar extends React.Component {
             id="input"
             placeholder="Where to go next..."
           />
+          <button
+            type="submit"
+            className="search-button btn"
+          > <span className="fa fa-search" /><span> Search</span>
+          </button>
         </div>
-        <button
-          type="submit"
-          className="search-button btn"
-        > <span className="fa fa-search" /><span> Search</span>
-        </button>
       </form>
     );
   }

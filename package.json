@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "google-map-react": "^0.24.0",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "react-google-maps": "^7.2.0"
   },
   "devDependencies": {
     "react-scripts": "1.0.10"

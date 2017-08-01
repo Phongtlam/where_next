@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
-import SearchBar from './SearchBar';
+// import GmapContainer from './GmapContainer';
 import Gmap from './Gmap';
 import './App.css';
-
-const getCoords = () => new Promise((resolve, reject) => {
-  navigator.geolocation.getCurrentPosition((position) => {
-    resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
-    // resolve(position);
-  }, reject);
-});
 
 class App extends Component {
   constructor(props) {
@@ -19,26 +12,14 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    getCoords()
-    .then((position) => {
-      this.setState({
-        lat: position.lat,
-        lng: position.lng,
-      });
-    })
-    .catch((err) => {
-      console.error(err.message);
-    });
-  }
-
   render() {
     return (
       <div className="app">
-        <SearchBar />
+        {/* <SearchBar /> */}
         <div className="gmap">
-          {/* <Gmap {...this.state} /> */}
+          {/* <GmapContainer {...this.state} /> */}
         </div>
+        <Gmap />
       </div>
     );
   }
