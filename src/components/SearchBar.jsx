@@ -21,7 +21,7 @@ class SearchBar extends React.Component {
         </div>
         <button
           type="submit"
-          className="search-button btn btn-success"
+          className="search-button btn"
         > <span className="fa fa-search" /><span> Search</span>
         </button>
       </form>

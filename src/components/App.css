@@ -12,11 +12,19 @@
 
 .search-box {
   width: 300px;
+  border: 3px solid #00B4CC;
 }
 
 .search-button {
   float: left;
   margin: 3px;
+  background-color: #00B4CC;
+  color: white;
+}
+
+.search-button:hover {
+  background-color: #058b9d;
+  color: white;
 }
 
 .gmap {

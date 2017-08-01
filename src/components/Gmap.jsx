@@ -14,11 +14,12 @@ const Popup = () => (
 );
 
 class Gmap extends React.Component {
+  static defaultProps = {
+    center: { lat: 0, lng: 0 },
+    zoom: 15
+  };
   constructor(props) {
     super(props);
-    this.state = {
-      defaultCenter: { lat: 59.95, lng: 30.33 },
-    };
   }
 
   render() {
@@ -29,16 +30,16 @@ class Gmap extends React.Component {
     return (
       <GoogleMapReact
         bootstrapURLKeys={{
-          key: process.env.GOOG_MAP,
+          key: process.env.REACT_APP_GOOG_MAP,
         }}
-        defaultCenter={this.state.defaultCenter}
+        defaultCenter={this.props.center}
         center={center}
-        defaultZoom={17}
+        defaultZoom={this.props.zoom}
       >
-        <Popup
+        {/* <Popup
           lat={center.lat}
           lng={center.lng}
-        />
+        /> */}
       </GoogleMapReact>
     );
   }

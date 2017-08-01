@@ -5,7 +5,7 @@ import './App.css';
 
 const getCoords = () => new Promise((resolve, reject) => {
   navigator.geolocation.getCurrentPosition((position) => {
-    resolve({ lat: position.coords.latitude, long: position.coords.longitude });
+    resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
     // resolve(position);
   }, reject);
 });
@@ -22,7 +22,10 @@ class App extends Component {
   componentDidMount() {
     getCoords()
     .then((position) => {
-      console.log('position is', position);
+      this.setState({
+        lat: position.lat,
+        lng: position.lng,
+      });
     })
     .catch((err) => {
       console.error(err.message);
@@ -34,7 +37,7 @@ class App extends Component {
       <div className="app">
         <SearchBar />
         <div className="gmap">
-          <Gmap {...this.state} />
+          {/* <Gmap {...this.state} /> */}
         </div>
       </div>
     );
