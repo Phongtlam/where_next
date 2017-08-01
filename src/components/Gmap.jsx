@@ -1,14 +1,23 @@
 import React from 'react';
 import GoogleMapReact from 'google-map-react';
 
+import pin from './pin.png';
+
+const Popup = () => (
+  <div>
+    <img
+      // style={styles.marker}
+      src={pin}
+      alt="pin"
+    />
+  </div>
+);
+
 class Gmap extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      defaultCenter: {
-        lat: 0,
-        lng: 0,
-      },
+      defaultCenter: { lat: 59.95, lng: 30.33 },
     };
   }
 
@@ -20,16 +29,16 @@ class Gmap extends React.Component {
     return (
       <GoogleMapReact
         bootstrapURLKeys={{
-          // key: 'AIzaSyD1luAT63jgddurdrZFW_Ba9_jRKo7GkP0',
+          key: process.env.GOOG_MAP,
         }}
         defaultCenter={this.state.defaultCenter}
         center={center}
         defaultZoom={17}
       >
-        {/* <Popup
+        <Popup
           lat={center.lat}
           lng={center.lng}
-        /> */}
+        />
       </GoogleMapReact>
     );
   }

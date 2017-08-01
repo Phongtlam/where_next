@@ -12,12 +12,16 @@ class SearchBar extends React.Component {
     return (
       <form>
         <div className="search form-group">
-          <label htmlFor="SearchBar">Where do we go?</label>
-          <input type="text" className="search-box form-control" id="input" />
+          <input
+            type="text"
+            className="search-box form-control"
+            id="input"
+            placeholder="Where to go next..."
+          />
         </div>
         <button
           type="submit"
-          className="search-button btn btn-search btn-success"
+          className="search-button btn btn-success"
         > <span className="fa fa-search" /><span> Search</span>
         </button>
       </form>
