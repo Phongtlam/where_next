@@ -20,6 +20,7 @@ class Gmap extends React.Component {
     this.initMap = this.initMap.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onInput = this.onInput.bind(this);
+    this.textSearch = this.textSearch.bind(this);
     this.getInfoWindow = this.getInfoWindow.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
     this.geocoder = new window.google.maps.Geocoder();
@@ -31,7 +32,8 @@ class Gmap extends React.Component {
 
   onSubmit(event) {
     event.preventDefault();
-    this.geocodeAddress(this.inputElement.value);
+    // this.geocodeAddress(this.inputElement.value);
+    this.textSearch(this.inputElement.value);
   }
 
   onInput(input) {
@@ -63,6 +65,48 @@ class Gmap extends React.Component {
     });
   }
 
+  textSearch(place) {
+    this.inputElement.value = '';
+    this.service.textSearch({ query: place }, (results, status) => {
+      // if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+      //   for (let i = 0; i < results.length; i += 1) {
+      //     this.getMarker(results[i]);
+      //   }
+      // }
+      if (status !== 'OK') {
+        return;
+      }
+      console.log('results', results[0])
+      this.map.setZoom(16);
+      this.marker.setPosition(results[0].geometry.location);
+      this.map.setCenter(results[0].geometry.location);
+    });
+  }
+
+  getMarker(place) {
+    const bounds = new window.google.maps.LatLngBounds();
+    const image = {
+      url: place.icon,
+      size: new window.google.maps.Size(71, 71),
+      origin: new window.google.maps.Point(0, 0),
+      anchor: new window.google.maps.Point(17, 34),
+      scaledSize: new window.google.maps.Size(25, 25)
+    };
+
+    this.marker = new window.google.maps.Marker({
+      map: this.map,
+      // icon: image,
+      title: place.name,
+      position: place.geometry.location
+    });
+
+    // placeList.innerHTML += '<li>' + place.name + '</li>';
+
+    bounds.extend(place.geometry.location);
+    this.map.fitBounds(bounds);
+    this.marker.addListener('click', this.getInfoWindow);
+  }
+
   initMap() {
     getCoords()
     .then((position) => {
@@ -80,7 +124,8 @@ class Gmap extends React.Component {
           lng: position.lng,
         },
       });
-      this.marker.addListener('click', this.getInfoWindow);
+      // this.marker.addListener('click', this.getInfoWindow);
+      this.service = new window.google.maps.places.PlacesService(this.map);
       this.autocomplete = new window.google.maps.places.Autocomplete(this.inputElement);
       this.autocomplete.addListener('place_changed', () => {
         if (this.infowindow) {
@@ -91,7 +136,8 @@ class Gmap extends React.Component {
         if (!place.geometry) {
           return;
         }
-        this.geocodeAddress(place);
+        // this.geocodeAddress(place);
+        this.textSearch(place);
       });
     })
     .catch((err) => {
