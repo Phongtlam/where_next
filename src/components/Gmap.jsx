@@ -1,21 +1,5 @@
 import React from 'react';
 
-var INITIAL_LOCATION = {
-  address: 'London, United Kingdom',
-  position: {
-    latitude: 51.5085300,
-    longitude: -0.1257400
-  }
-};
-
-var INITIAL_MAP_ZOOM_LEVEL = 8;
-
-var ATLANTIC_OCEAN = {
-  latitude: 29.532804,
-  longitude: -55.491477
-};
-
-
 const getCoords = () => new Promise((resolve, reject) => {
   navigator.geolocation.getCurrentPosition((position) => {
     resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
@@ -29,54 +13,66 @@ class Gmap extends React.Component {
     super(props);
     this.state = {
       isGeocodingError: false,
-      foundAddress: INITIAL_LOCATION.address,
+      foundAddress: null,
       position: {
         lat: null,
         lng: null,
       }
     };
-    this.setSearchInputElementReference = this.setSearchInputElementReference.bind(this);
+    this.initMap = this.initMap.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+    this.onInput = this.onInput.bind(this);
+    this.getMarker = this.getMarker.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
-    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.geocoder = new window.google.maps.Geocoder();
   }
 
   componentDidMount() {
+    this.initMap();
+  }
+
+  initMap() {
     getCoords()
     .then((position) => {
-      const newMarker = {
-        position: {
+      this.map = new window.google.maps.Map(this.mapElement, {
+        zoom: 14,
+        center: {
           lat: position.lat,
           lng: position.lng,
         },
-      };
-      this.setState(() => ({
-        // markers: prevState.markers.concat(newMarker),
-        position: { lat: position.lat, lng: position.lng },
-      }));
+      });
+      this.getMarker(position);
+      this.autocomplete = new window.google.maps.places.Autocomplete(this.inputElement);
+      this.autocomplete.addListener('place_changed', () => {
+        const place = this.autocomplete.getPlace();
+        console.log('place is', place)
+        // if (!place.geometry) {
+        //   window.alert('No details for ', place.name);
+        //   return;
+        // }
+        if (place.geometry.viewport) {
+          this.map.setCenter(place.geometry.location);
+          this.marker.setPosition(place.geometry.location);
+          // this.getMarker(place.geometry.location);
+          this.inputElement.value = '';
+        }
+      })
     })
     .catch((err) => {
       console.error(err.message);
     });
+  }
 
-    const mapElement = this.mapElement;
-
-    this.map = new window.google.maps.Map(mapElement, {
-      zoom: 14,
-      center: {
-        lat: this.state.position.lat,
-        lng: this.state.position.lng,
-      },
-    });
-
+  getMarker(position) {
+    console.log('position is', position)
     this.marker = new window.google.maps.Marker({
       map: this.map,
+      animation: window.google.maps.Animation.DROP,
       position: {
-        lat: INITIAL_LOCATION.position.latitude,
-        lng: INITIAL_LOCATION.position.longitude,
+        lat: position.lat,
+        lng: position.lng,
       },
     });
-
-    this.geocoder = new window.google.maps.Geocoder();
   }
 
   geocodeAddress(address) {
@@ -87,9 +83,9 @@ class Gmap extends React.Component {
           isGeocodingError: false,
         });
 
+        console.log('geo result', results)
         this.map.setCenter(results[0].geometry.location);
         this.marker.setPosition(results[0].geometry.location);
-
         return;
       }
 
@@ -97,29 +93,19 @@ class Gmap extends React.Component {
         foundAddress: null,
         isGeocodingError: true,
       });
-
-      this.map.setCenter({
-        lat: ATLANTIC_OCEAN.latitude,
-        lng: ATLANTIC_OCEAN.longitude,
-      });
-
-      this.marker.setPosition({
-        lat: ATLANTIC_OCEAN.latitude,
-        lng: ATLANTIC_OCEAN.longitude,
-      });
     });
   }
 
-  handleFormSubmit(submitEvent) {
-    submitEvent.preventDefault();
-
-    const address = this.searchInputElement.value;
-
-    this.geocodeAddress(address);
+  onSubmit(event) {
+    event.preventDefault();
+    // this.geocodeAddress(this.inputElement.value);
+    this.autocomplete(this.inputElement.value);
+    this.inputElement.value = '';
+    // can split out from submit
   }
 
-  setSearchInputElementReference(inputReference) {
-    this.searchInputElement = inputReference;
+  onInput(input) {
+    this.inputElement = input;
   }
 
   setMapElementReference(mapElementReference) {
@@ -130,13 +116,13 @@ class Gmap extends React.Component {
     return (
       <div>
         <div className="gmap" ref={this.setMapElementReference} />
-        <form className="search">
+        <form className="search" onSubmit={this.onSubmit}>
           <div className="form-group">
             <input
               type="text"
               className="search-box form-control"
-              id="input"
               placeholder="Where to go next..."
+              ref={this.onInput}
             />
             <button
               type="submit"

@@ -2,6 +2,10 @@
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.btn:focus,.btn:active {
+  outline: none !important;
+}
+
 .search-bar {
   position: absolute;
 }
@@ -25,6 +29,10 @@
 
 .search-button:hover {
   background-color: #058b9d;
+  color: white;
+}
+
+.search-button:focus {
   color: white;
 }
 
