@@ -22,6 +22,7 @@ class Gmap extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onInput = this.onInput.bind(this);
     this.getMarker = this.getMarker.bind(this);
+    this.getInfoWindow = this.getInfoWindow.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
     this.geocoder = new window.google.maps.Geocoder();
   }
@@ -43,6 +44,9 @@ class Gmap extends React.Component {
       this.getMarker(position);
       this.autocomplete = new window.google.maps.places.Autocomplete(this.inputElement);
       this.autocomplete.addListener('place_changed', () => {
+        if (this.infowindow) {
+          this.infowindow.close();
+        }
         const place = this.autocomplete.getPlace();
         // need this check else will error out
         if (!place.geometry) {
@@ -62,7 +66,6 @@ class Gmap extends React.Component {
   }
 
   getMarker(position) {
-    console.log('position is', position)
     this.marker = new window.google.maps.Marker({
       map: this.map,
       animation: window.google.maps.Animation.DROP,
@@ -71,23 +74,23 @@ class Gmap extends React.Component {
         lng: position.lng,
       },
     });
+    this.marker.addListener('click', this.getInfoWindow);
+  }
+
+  getInfoWindow() {
+    this.infowindow = new window.google.maps.InfoWindow({
+      content: `<div>Hi</div>`
+    });
+    this.infowindow.open(this.map, this.marker);
   }
 
   geocodeAddress(address) {
     this.geocoder.geocode({ address }, (results, status) => {
-      if (status === window.google.maps.GeocoderStatus.OK) {
-        this.setState({
-          isGeocodingError: false,
-        });
-
-        this.map.setCenter(results[0].geometry.location);
-        this.marker.setPosition(results[0].geometry.location);
+      if (status !== 'OK') {
         return;
       }
-
-      this.setState({
-        isGeocodingError: true,
-      });
+      this.map.setCenter(results[0].geometry.location);
+      this.marker.setPosition(results[0].geometry.location);
     });
   }
 
