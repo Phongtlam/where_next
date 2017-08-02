@@ -2,7 +2,7 @@ import React from 'react';
 
 const InfoWindow = (props) => (
   <div>
-    Hi
+    HiIII!!
   </div>
 )
 

@@ -15,15 +15,15 @@ class Gmap extends React.Component {
       position: {
         lat: null,
         lng: null,
-      }
+      },
+      places: [],
     };
     this.initMap = this.initMap.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onInput = this.onInput.bind(this);
     this.textSearch = this.textSearch.bind(this);
-    this.getInfoWindow = this.getInfoWindow.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
-    this.geocoder = new window.google.maps.Geocoder();
+    this.clicker = this.clicker.bind(this);
   }
 
   componentDidMount() {
@@ -32,7 +32,6 @@ class Gmap extends React.Component {
 
   onSubmit(event) {
     event.preventDefault();
-    // this.geocodeAddress(this.inputElement.value);
     this.textSearch(this.inputElement.value);
   }
 
@@ -40,63 +39,79 @@ class Gmap extends React.Component {
     this.inputElement = input;
   }
 
-  getInfoWindow() {
-    this.infowindow = new window.google.maps.InfoWindow({
-      content: '<button>click</button>',
-    });
-    this.infowindow.open(this.map, this.marker);
-  }
-
   setMapElementReference(mapElementReference) {
     this.mapElement = mapElementReference;
   }
 
-  geocodeAddress(address) {
+  textSearch(place) {
+    if (this.infowindow) {
+      this.infowindow.close();
+    }
+    const query = (typeof (place) === 'string') ? place : place.name;
     this.inputElement.value = '';
-    const input = (typeof (address) === 'string') ? { address } : { placeId: address.place_id };
-    this.geocoder.geocode(input, (results, status) => {
+    this.service.textSearch({
+      location: this.map.getCenter(),
+      radius: '1000',
+      query,
+    }, (results, status) => {
+      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+        this.setState((prevState) => {
+          return { places: prevState.places.concat(results) }
+        }, () => {
+          // for (let i = 0; i < this.state.places.length; i += 1) {
+          //   this.getMarker(this.state.places[i]);
+          // }
+          this.map.setCenter(results[0].geometry.location);
+          this.map.setZoom(16);
+          this.getMarker(this.state.places[this.state.places.length - 1]);
+        })
+      }
       if (status !== 'OK') {
         return;
       }
-      console.log('results is', results[0])
-      this.map.setZoom(16);
-      this.map.setCenter(results[0].geometry.location);
-      this.marker.setPosition(results[0].geometry.location);
+      // this.map.setZoom(16);
+      // this.marker.setAnimation(window.google.maps.Animation.DROP);
+      // this.marker.setPosition(results[0].geometry.location);
+      // this.map.setCenter(results[0].geometry.location);
+      console.log('results is', results[0]);
+      let openNow = 'Unknown';
+      if (results[0].opening_hours) {
+        openNow = results[0].opening_hours.open_now === true ? 'Yes' : 'No';
+      }
+      const contentString =
+        `<div class="info-header"><h4>${results[0].name}</h4><img src="${results[0].icon}" alt="place type"></div>` +
+        `<p>Rating: ${results[0].rating}</span><br/>` +
+        `Open now: ${openNow}</p>`
+      this.marker.addListener('click', () => {
+        // var div = document.createElement('div');
+        // ReactDOM.render(<InfoWindow {...results[0]}/>, div );
+        // this.infowindow.setContent( div );
+        this.infowindow.setContent(contentString);
+        this.map.setCenter(this.marker.getPosition());
+        this.infowindow.open(this.map, this.marker);
+      });
     });
   }
 
-  textSearch(place) {
-    this.inputElement.value = '';
-    this.service.textSearch({ query: place }, (results, status) => {
-      // if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-      //   for (let i = 0; i < results.length; i += 1) {
-      //     this.getMarker(results[i]);
-      //   }
-      // }
-      if (status !== 'OK') {
-        return;
-      }
-      console.log('results', results[0])
-      this.map.setZoom(16);
-      this.marker.setPosition(results[0].geometry.location);
-      this.map.setCenter(results[0].geometry.location);
-    });
+  clicker() {
+    console.log('CLICKKKKK')
   }
 
   getMarker(place) {
     const bounds = new window.google.maps.LatLngBounds();
     const image = {
       url: place.icon,
-      size: new window.google.maps.Size(71, 71),
+      size: new window.google.maps.Size(20, 32),
       origin: new window.google.maps.Point(0, 0),
-      anchor: new window.google.maps.Point(17, 34),
+      anchor: new window.google.maps.Point(0, 32),
       scaledSize: new window.google.maps.Size(25, 25)
     };
 
     this.marker = new window.google.maps.Marker({
       map: this.map,
-      // icon: image,
+      icon: image,
       title: place.name,
+      animation: window.google.maps.Animation.DROP,
       position: place.geometry.location
     });
 
@@ -119,12 +134,14 @@ class Gmap extends React.Component {
       });
       this.marker = new window.google.maps.Marker({
         map: this.map,
+        animation: window.google.maps.Animation.DROP,
         position: {
           lat: position.lat,
           lng: position.lng,
         },
       });
       // this.marker.addListener('click', this.getInfoWindow);
+      this.infowindow = new window.google.maps.InfoWindow();
       this.service = new window.google.maps.places.PlacesService(this.map);
       this.autocomplete = new window.google.maps.places.Autocomplete(this.inputElement);
       this.autocomplete.addListener('place_changed', () => {

@@ -44,3 +44,9 @@
   height: 100%;
   z-index: -1;
 }
+
+.info-header {
+  background-color: #00B4CC;
+  color: white;
+  padding: 3px;
+}
