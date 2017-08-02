@@ -13,7 +13,6 @@ class Gmap extends React.Component {
     super(props);
     this.state = {
       isGeocodingError: false,
-      foundAddress: null,
       position: {
         lat: null,
         lng: null,
@@ -45,11 +44,10 @@ class Gmap extends React.Component {
       this.autocomplete = new window.google.maps.places.Autocomplete(this.inputElement);
       this.autocomplete.addListener('place_changed', () => {
         const place = this.autocomplete.getPlace();
-        console.log('place is', place)
-        // if (!place.geometry) {
-        //   window.alert('No details for ', place.name);
-        //   return;
-        // }
+        // need this check else will error out
+        if (!place.geometry) {
+          return;
+        }
         if (place.geometry.viewport) {
           this.map.setCenter(place.geometry.location);
           this.marker.setPosition(place.geometry.location);
@@ -79,18 +77,15 @@ class Gmap extends React.Component {
     this.geocoder.geocode({ address }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK) {
         this.setState({
-          foundAddress: results[0].formatted_address,
           isGeocodingError: false,
         });
 
-        console.log('geo result', results)
         this.map.setCenter(results[0].geometry.location);
         this.marker.setPosition(results[0].geometry.location);
         return;
       }
 
       this.setState({
-        foundAddress: null,
         isGeocodingError: true,
       });
     });
@@ -98,8 +93,7 @@ class Gmap extends React.Component {
 
   onSubmit(event) {
     event.preventDefault();
-    // this.geocodeAddress(this.inputElement.value);
-    this.autocomplete(this.inputElement.value);
+    this.geocodeAddress(this.inputElement.value);
     this.inputElement.value = '';
     // can split out from submit
   }
