@@ -22,8 +22,9 @@ class Gmap extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onInput = this.onInput.bind(this);
     this.textSearch = this.textSearch.bind(this);
+    this.getMarker = this.getMarker.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
-    this.clicker = this.clicker.bind(this);
+    this.clicky = this.clicky.bind(this);
   }
 
   componentDidMount() {
@@ -62,7 +63,6 @@ class Gmap extends React.Component {
           //   this.getMarker(this.state.places[i]);
           // }
           this.map.setCenter(results[0].geometry.location);
-          this.map.setZoom(16);
           this.getMarker(this.state.places[this.state.places.length - 1]);
         })
       }
@@ -74,27 +74,16 @@ class Gmap extends React.Component {
       // this.marker.setPosition(results[0].geometry.location);
       // this.map.setCenter(results[0].geometry.location);
       console.log('results is', results[0]);
-      let openNow = 'Unknown';
-      if (results[0].opening_hours) {
-        openNow = results[0].opening_hours.open_now === true ? 'Yes' : 'No';
-      }
-      const contentString =
-        `<div class="info-header"><h4>${results[0].name}</h4><img src="${results[0].icon}" alt="place type"></div>` +
-        `<p>Rating: ${results[0].rating}</span><br/>` +
-        `Open now: ${openNow}</p>`
-      this.marker.addListener('click', () => {
-        // var div = document.createElement('div');
-        // ReactDOM.render(<InfoWindow {...results[0]}/>, div );
-        // this.infowindow.setContent( div );
-        this.infowindow.setContent(contentString);
-        this.map.setCenter(this.marker.getPosition());
-        this.infowindow.open(this.map, this.marker);
-      });
+      // let openNow = 'Unknown';
+      // if (results[0].opening_hours) {
+      //   openNow = results[0].opening_hours.open_now === true ? 'Yes' : 'No';
+      // }
+      // const contentString =
+      //   `<div class="info-header"><h4>${results[0].name}</h4><img src="${results[0].icon}" alt="place type"></div>` +
+      //   `<p>Rating: ${results[0].rating}</span><br/>` +
+      //   `Open now: ${openNow}</p>`
+      // this.marker.addListener('click', this.getInfoWindow(contentString));
     });
-  }
-
-  clicker() {
-    console.log('CLICKKKKK')
   }
 
   getMarker(place) {
@@ -114,12 +103,33 @@ class Gmap extends React.Component {
       animation: window.google.maps.Animation.DROP,
       position: place.geometry.location
     });
+    let openNow = 'Unknown';
+    if (place.opening_hours) {
+      openNow = place.opening_hours.open_now === true ? 'Yes' : 'No';
+    }
+    // const address = place.formatted_address ?
+
+    const contentString =
+      `<div class="info-header" ref="info"><h4>${place.name}</h4></div>` +
+      `<p>${place.formatted_address}<br/>` +
+      `Rating: ${place.rating}<br/>` +
+      `Open now: ${openNow}</p>` +
+      '<div id="add-button></div>"';
 
     // placeList.innerHTML += '<li>' + place.name + '</li>';
 
     bounds.extend(place.geometry.location);
     this.map.fitBounds(bounds);
-    this.marker.addListener('click', this.getInfoWindow);
+    this.map.setZoom(16);
+    this.marker.addListener('click', () => {
+      this.map.setCenter(this.marker.getPosition());
+      this.infowindow.setContent(contentString);
+      this.infowindow.open(this.map, this.marker);
+    });
+  }
+
+  clicky() {
+    console.log('clickkk meeee')
   }
 
   initMap() {
@@ -160,6 +170,10 @@ class Gmap extends React.Component {
     .catch((err) => {
       console.error(err.message);
     });
+  }
+
+  componentDidUnMount() {
+    window.google.maps.event.clearListeners(this.map, 'zoom_changed')
   }
 
   render() {
