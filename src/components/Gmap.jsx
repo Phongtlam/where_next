@@ -20,7 +20,6 @@ class Gmap extends React.Component {
     this.initMap = this.initMap.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onInput = this.onInput.bind(this);
-    this.getMarker = this.getMarker.bind(this);
     this.getInfoWindow = this.getInfoWindow.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
     this.geocoder = new window.google.maps.Geocoder();
@@ -50,18 +49,6 @@ class Gmap extends React.Component {
     this.mapElement = mapElementReference;
   }
 
-  getMarker(position) {
-    this.marker = new window.google.maps.Marker({
-      map: this.map,
-      animation: window.google.maps.Animation.DROP,
-      position: {
-        lat: position.lat,
-        lng: position.lng,
-      },
-    });
-    this.marker.addListener('click', this.getInfoWindow);
-  }
-
   geocodeAddress(address) {
     this.inputElement.value = '';
     const input = (typeof (address) === 'string') ? { address } : { placeId: address.place_id };
@@ -69,7 +56,8 @@ class Gmap extends React.Component {
       if (status !== 'OK') {
         return;
       }
-      this.map.setZoom(11);
+      console.log('results is', results[0])
+      this.map.setZoom(16);
       this.map.setCenter(results[0].geometry.location);
       this.marker.setPosition(results[0].geometry.location);
     });
@@ -79,13 +67,20 @@ class Gmap extends React.Component {
     getCoords()
     .then((position) => {
       this.map = new window.google.maps.Map(this.mapElement, {
-        zoom: 14,
+        zoom: 12,
         center: {
           lat: position.lat,
           lng: position.lng,
         },
       });
-      this.getMarker(position);
+      this.marker = new window.google.maps.Marker({
+        map: this.map,
+        position: {
+          lat: position.lat,
+          lng: position.lng,
+        },
+      });
+      this.marker.addListener('click', this.getInfoWindow);
       this.autocomplete = new window.google.maps.places.Autocomplete(this.inputElement);
       this.autocomplete.addListener('place_changed', () => {
         if (this.infowindow) {
@@ -108,6 +103,7 @@ class Gmap extends React.Component {
     return (
       <div>
         <div className="gmap" ref={this.setMapElementReference} />
+        <div className="infowindow" ref={this.setInfoReference} />
         <form className="search" onSubmit={this.onSubmit}>
           <div className="form-group">
             <input
