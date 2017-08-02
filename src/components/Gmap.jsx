@@ -12,7 +12,6 @@ class Gmap extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isGeocodingError: false,
       position: {
         lat: null,
         lng: null,
@@ -29,6 +28,51 @@ class Gmap extends React.Component {
 
   componentDidMount() {
     this.initMap();
+  }
+
+  onSubmit(event) {
+    event.preventDefault();
+    this.geocodeAddress(this.inputElement.value);
+  }
+
+  onInput(input) {
+    this.inputElement = input;
+  }
+
+  getInfoWindow() {
+    this.infowindow = new window.google.maps.InfoWindow({
+      content: '<button>click</button>',
+    });
+    this.infowindow.open(this.map, this.marker);
+  }
+
+  setMapElementReference(mapElementReference) {
+    this.mapElement = mapElementReference;
+  }
+
+  getMarker(position) {
+    this.marker = new window.google.maps.Marker({
+      map: this.map,
+      animation: window.google.maps.Animation.DROP,
+      position: {
+        lat: position.lat,
+        lng: position.lng,
+      },
+    });
+    this.marker.addListener('click', this.getInfoWindow);
+  }
+
+  geocodeAddress(address) {
+    this.inputElement.value = '';
+    const input = (typeof (address) === 'string') ? { address } : { placeId: address.place_id };
+    this.geocoder.geocode(input, (results, status) => {
+      if (status !== 'OK') {
+        return;
+      }
+      this.map.setZoom(11);
+      this.map.setCenter(results[0].geometry.location);
+      this.marker.setPosition(results[0].geometry.location);
+    });
   }
 
   initMap() {
@@ -52,61 +96,12 @@ class Gmap extends React.Component {
         if (!place.geometry) {
           return;
         }
-        if (place.geometry.viewport) {
-          this.map.setCenter(place.geometry.location);
-          this.marker.setPosition(place.geometry.location);
-          // this.getMarker(place.geometry.location);
-          this.inputElement.value = '';
-        }
-      })
+        this.geocodeAddress(place);
+      });
     })
     .catch((err) => {
       console.error(err.message);
     });
-  }
-
-  getMarker(position) {
-    this.marker = new window.google.maps.Marker({
-      map: this.map,
-      animation: window.google.maps.Animation.DROP,
-      position: {
-        lat: position.lat,
-        lng: position.lng,
-      },
-    });
-    this.marker.addListener('click', this.getInfoWindow);
-  }
-
-  getInfoWindow() {
-    this.infowindow = new window.google.maps.InfoWindow({
-      content: `<div>Hi</div>`
-    });
-    this.infowindow.open(this.map, this.marker);
-  }
-
-  geocodeAddress(address) {
-    this.geocoder.geocode({ address }, (results, status) => {
-      if (status !== 'OK') {
-        return;
-      }
-      this.map.setCenter(results[0].geometry.location);
-      this.marker.setPosition(results[0].geometry.location);
-    });
-  }
-
-  onSubmit(event) {
-    event.preventDefault();
-    this.geocodeAddress(this.inputElement.value);
-    this.inputElement.value = '';
-    // can split out from submit
-  }
-
-  onInput(input) {
-    this.inputElement = input;
-  }
-
-  setMapElementReference(mapElementReference) {
-    this.mapElement = mapElementReference;
   }
 
   render() {
