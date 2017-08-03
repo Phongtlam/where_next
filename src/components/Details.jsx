@@ -7,20 +7,8 @@ class Details extends React.Component {
   }
 
   onAdd() {
-    console.log('cheers');
-    const fetchUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${this.props.details.photos.reference}&key=${process.env.REACT_APP_GOOG_MAP}`;
-    fetch(fetchUrl, {
-      method: 'GET',
-      // mode: 'cors',
-      dataType: 'jsonp',
-      cache: false,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => {
-      console.log('response is',response)
-    })
+    console.log('details', this.props.details)
+    this.props.addToFavList(this.props.details);
   }
 
   render() {
@@ -34,7 +22,8 @@ class Details extends React.Component {
             User's Rating: {details.rating}
           </p>
           <button onClick={this.onAdd} className="faa-parent animated-hover add-fav btn">
-            <span className="faa-vertical animated-hover fa fa-thumbs-o-up" /><span className="suggest"> Suggest this!</span></button>
+            <span className="faa-vertical animated-hover fa fa-thumbs-o-up" />
+            <span className="suggest"> Suggest this!</span></button>
         </div>
       </div>
     );

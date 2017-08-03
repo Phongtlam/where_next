@@ -1,6 +1,8 @@
 import React from 'react';
 import Details from './Details';
 
+const where_next = require('../where_next.png');
+
 const getCoords = () => new Promise((resolve, reject) => {
   navigator.geolocation.getCurrentPosition((position) => {
     resolve({ lat: position.coords.latitude, lng: position.coords.longitude });
@@ -20,6 +22,7 @@ class Gmap extends React.Component {
       places: [],
       details: {},
       placeImg: '',
+      favList: [],
     };
     this.initMap = this.initMap.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -27,6 +30,7 @@ class Gmap extends React.Component {
     this.textSearch = this.textSearch.bind(this);
     this.getMarker = this.getMarker.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
+    this.addToFavList = this.addToFavList.bind(this);
   }
 
   componentDidMount() {
@@ -58,6 +62,9 @@ class Gmap extends React.Component {
       });
     } else {
       query = place;
+      this.setState({
+        placeImg: where_next,
+      });
     }
     this.inputElement.value = '';
     this.service.textSearch({
@@ -69,9 +76,6 @@ class Gmap extends React.Component {
         return;
       }
       this.setState(prevState => ({ places: prevState.places.concat(results) }), () => {
-        // for (let i = 0; i < this.state.places.length; i += 1) {
-        //   this.getMarker(this.state.places[i]);
-        // }
         this.setState({
           details: this.state.places[this.state.places.length - 1],
         });
@@ -88,7 +92,7 @@ class Gmap extends React.Component {
       size: new window.google.maps.Size(20, 32),
       origin: new window.google.maps.Point(0, 0),
       anchor: new window.google.maps.Point(0, 32),
-      scaledSize: new window.google.maps.Size(25, 25)
+      scaledSize: new window.google.maps.Size(25, 25),
     };
 
     this.marker = new window.google.maps.Marker({
@@ -161,8 +165,10 @@ class Gmap extends React.Component {
     });
   }
 
-  getDetailImg() {
-
+  addToFavList(place) {
+    this.setState(prevState => ({
+      favList: prevState.favList.concat(place),
+    }));
   }
 
   componentDidUnMount() {
@@ -171,7 +177,7 @@ class Gmap extends React.Component {
 
   render() {
     const details = this.state.details.name !== undefined ?
-      <Details details={this.state.details} placeImg={this.state.placeImg} /> : null;
+      <Details {...this.state} addToFavList={this.addToFavList} /> : null;
     return (
       <div>
         <div className="gmap" ref={this.setMapElementReference} />
