@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 // import GmapContainer from './GmapContainer';
 import Gmap from './Gmap';
+import Auth from './Auth';
+
 import './App.css';
+
+// const auth = new Auth();
+// auth.login();
 
 class App extends Component {
   constructor(props) {
@@ -12,13 +17,13 @@ class App extends Component {
     };
   }
 
+  componentWillMount() {
+    console.log('in here')
+  }
+
   render() {
     return (
       <div className="app">
-        {/* <SearchBar /> */}
-        <div className="gmap">
-          {/* <GmapContainer {...this.state} /> */}
-        </div>
         <Gmap />
       </div>
     );

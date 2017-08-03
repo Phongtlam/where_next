@@ -8,9 +8,7 @@ const app = express();
 
 const client = redis.createClient(process.env.REACT_APP_REDIS);
 
-app.use(bodyParser.urlencoded({
-  extended: true,
-}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static(path.resolve(__dirname, '..', 'build')));
