@@ -5,7 +5,7 @@ import Auth from './Auth';
 
 import './App.css';
 
-// const auth = new Auth();
+const auth = new Auth();
 // auth.login();
 
 class App extends Component {
@@ -17,14 +17,54 @@ class App extends Component {
     };
   }
 
+  goTo(route) {
+    this.props.history.replace(`/${route}`)
+  }
+
+  // login() {
+  //   this.props.auth.login();
+  // }
+  //
+  onLogout() {
+    auth.logout();
+  }
+
   componentWillMount() {
     console.log('in here')
   }
 
+  onLogin() {
+    auth.login()
+  }
+
   render() {
+    const { isAuthenticated } = auth;
     return (
       <div className="app">
         <Gmap />
+        {
+              !auth.isAuthenticated() && (
+                  <button
+                    bsStyle="primary"
+                    className="btn-margin"
+                    onClick={this.onLogin.bind(this)}
+                  >
+                    Log In!
+                  </button>
+                )
+            }
+            {
+              auth.isAuthenticated() && (
+                  <button
+                    bsStyle="primary"
+                    className="btn-margin"
+                    onClick={this.onLogout.bind(this)}
+                  >
+                    Log Out
+                  </button>
+                )
+            }
+        {/* <button onClick={this.onLogin}>CLICK</button> */}
       </div>
     );
   }
