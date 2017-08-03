@@ -1,4 +1,5 @@
 import React from 'react';
+import Details from './Details';
 
 const getCoords = () => new Promise((resolve, reject) => {
   navigator.geolocation.getCurrentPosition((position) => {
@@ -17,6 +18,8 @@ class Gmap extends React.Component {
         lng: null,
       },
       places: [],
+      details: {},
+      placeImg: '',
     };
     this.initMap = this.initMap.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -24,7 +27,6 @@ class Gmap extends React.Component {
     this.textSearch = this.textSearch.bind(this);
     this.getMarker = this.getMarker.bind(this);
     this.setMapElementReference = this.setMapElementReference.bind(this);
-    this.clicky = this.clicky.bind(this);
   }
 
   componentDidMount() {
@@ -48,41 +50,34 @@ class Gmap extends React.Component {
     if (this.infowindow) {
       this.infowindow.close();
     }
-    const query = (typeof (place) === 'string') ? place : place.name;
+    let query;
+    if (typeof (place) !== 'string') {
+      query = place.name;
+      this.setState({
+        placeImg: place.photos[0].getUrl({ maxWidth: 225, maxHeight: 178 }),
+      });
+    } else {
+      query = place;
+    }
     this.inputElement.value = '';
     this.service.textSearch({
       location: this.map.getCenter(),
       radius: '1000',
       query,
     }, (results, status) => {
-      if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-        this.setState((prevState) => {
-          return { places: prevState.places.concat(results) }
-        }, () => {
-          // for (let i = 0; i < this.state.places.length; i += 1) {
-          //   this.getMarker(this.state.places[i]);
-          // }
-          this.map.setCenter(results[0].geometry.location);
-          this.getMarker(this.state.places[this.state.places.length - 1]);
-        })
-      }
       if (status !== 'OK') {
         return;
       }
-      // this.map.setZoom(16);
-      // this.marker.setAnimation(window.google.maps.Animation.DROP);
-      // this.marker.setPosition(results[0].geometry.location);
-      // this.map.setCenter(results[0].geometry.location);
-      console.log('results is', results[0]);
-      // let openNow = 'Unknown';
-      // if (results[0].opening_hours) {
-      //   openNow = results[0].opening_hours.open_now === true ? 'Yes' : 'No';
-      // }
-      // const contentString =
-      //   `<div class="info-header"><h4>${results[0].name}</h4><img src="${results[0].icon}" alt="place type"></div>` +
-      //   `<p>Rating: ${results[0].rating}</span><br/>` +
-      //   `Open now: ${openNow}</p>`
-      // this.marker.addListener('click', this.getInfoWindow(contentString));
+      this.setState(prevState => ({ places: prevState.places.concat(results) }), () => {
+        // for (let i = 0; i < this.state.places.length; i += 1) {
+        //   this.getMarker(this.state.places[i]);
+        // }
+        this.setState({
+          details: this.state.places[this.state.places.length - 1],
+        });
+        this.map.setCenter(results[0].geometry.location);
+        this.getMarker(this.state.places[this.state.places.length - 1]);
+      })
     });
   }
 
@@ -111,10 +106,8 @@ class Gmap extends React.Component {
 
     const contentString =
       `<div class="info-header" ref="info"><h4>${place.name}</h4></div>` +
-      `<p>${place.formatted_address}<br/>` +
-      `Rating: ${place.rating}<br/>` +
-      `Open now: ${openNow}</p>` +
-      '<div id="add-button></div>"';
+      `<p>Rating: ${place.rating}<br/>` +
+      `Open now: ${openNow}</p>`;
 
     // placeList.innerHTML += '<li>' + place.name + '</li>';
 
@@ -126,10 +119,6 @@ class Gmap extends React.Component {
       this.infowindow.setContent(contentString);
       this.infowindow.open(this.map, this.marker);
     });
-  }
-
-  clicky() {
-    console.log('clickkk meeee')
   }
 
   initMap() {
@@ -172,11 +161,17 @@ class Gmap extends React.Component {
     });
   }
 
+  getDetailImg() {
+
+  }
+
   componentDidUnMount() {
     window.google.maps.event.clearListeners(this.map, 'zoom_changed')
   }
 
   render() {
+    const details = this.state.details.name !== undefined ?
+      <Details details={this.state.details} placeImg={this.state.placeImg} /> : null;
     return (
       <div>
         <div className="gmap" ref={this.setMapElementReference} />
@@ -196,6 +191,7 @@ class Gmap extends React.Component {
             </button>
           </div>
         </form>
+        {details}
       </div>
     );
   }

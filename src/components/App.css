@@ -50,3 +50,36 @@
   color: white;
   padding: 3px;
 }
+
+.details {
+  width: 300px;
+  float: right;
+  background-color: white;
+  padding: 10px;
+  margin-right: 50px;
+  box-shadow: 10px 10px 5px #888888;
+  width: 250px;
+}
+
+.add-fav {
+  background-color: #FC4A1A;
+  color: white;
+}
+
+.add-fav:hover {
+  background-color: #ba3b19;
+  color: white;
+}
+
+.add-fav:focus {
+  color: white;
+}
+
+.suggest {
+  padding-botton: 2px;
+}
+
+.place-img {
+  display: block;
+  margin: auto;
+}
