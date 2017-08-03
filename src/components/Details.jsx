@@ -44,9 +44,9 @@ class Details extends React.Component {
             Price: {priceDisplay}<br />
             User's Rating: {details.rating}
           </p>
-          <button onClick={this.onAdd} className="faa-parent animated-hover add-fav btn">
+          <button onClick={this.onAdd} className="faa-parent animated-hover btn-warning btn">
             <span className="faa-vertical animated-hover fa fa-thumbs-o-up" />
-            <span className="suggest"> Suggest this!</span></button>
+            <span className="suggest"> Save this place!</span></button>
         </div>
       </div>
     );

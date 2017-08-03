@@ -23,6 +23,36 @@ client.on('connect', () => {
   console.log('redis connect');
 });
 
+app.post('/login', (req, res) => {
+  client.hgetall(req.body.username, (err, reply) => {
+    if (reply) {
+      if (reply.password !== req.body.password) {
+        res.status(404);
+        res.end('error')
+      } else {
+        res.end(JSON.stringify(reply));
+      }
+    } else {
+      res.status(404);
+      res.end('error');
+    }
+  });
+});
+
+app.post('/signup', (req, res) => {
+  console.log('insignup', req.body)
+  client.hgetall(req.body.username, (err, reply) => {
+    if (reply) {
+      res.status(404);
+      res.end('error');
+    } else {
+      client.HMSET(req.body.username, {
+        password: req.body.password,
+      });
+    }
+  });
+});
+
 // app.post('/', (req, res) => {
 //   const shorten = shortid.generate();
 //   const orig = req.body.url;

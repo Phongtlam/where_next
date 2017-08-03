@@ -46,6 +46,11 @@
   color: white;
 }
 
+.login {
+  float: right;
+  margin-right: 50px;
+}
+
 .gmap {
   position: absolute;
   top: 0px;
@@ -85,11 +90,12 @@
   color: white;
 }
 
-.suggest {
-  padding-botton: 2px;
-}
-
 .place-img {
   display: block;
   margin: auto;
+}
+
+.close-x {
+  float: right;
+  cursor: pointer;
 }
