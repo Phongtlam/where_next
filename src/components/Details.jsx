@@ -79,7 +79,7 @@ Details.propTypes = {
 };
 
 Details.defaultProps = {
-  username: ''
+  username: '',
   details: {},
   placeImg: '',
 };
