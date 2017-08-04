@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 
 class Login extends React.Component {
   constructor(props) {
@@ -137,3 +138,10 @@ class Login extends React.Component {
 }
 
 export default Login;
+
+Login.propTypes = {
+  addToFavList: propTypes.func,
+  openClose: propTypes.func,
+  getUsername: propTypes.func,
+  isWelcome: propTypes.func,
+};

@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 
 class FavList extends React.Component {
   componentDidUpdate() {
@@ -21,3 +22,7 @@ class FavList extends React.Component {
 }
 
 export default FavList;
+
+FavList.propTypes = {
+  textSearch: propTypes.func,
+};

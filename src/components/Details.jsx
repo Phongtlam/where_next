@@ -1,4 +1,5 @@
 import React from 'react';
+import propTypes from 'prop-types';
 
 class Details extends React.Component {
   constructor(props) {
@@ -69,3 +70,16 @@ class Details extends React.Component {
 }
 
 export default Details;
+
+Details.propTypes = {
+  addToFavList: propTypes.func,
+  username: propTypes.string,
+  details: propTypes.object,
+  placeImg: propTypes.string,
+};
+
+Details.defaultProps = {
+  username: ''
+  details: {},
+  placeImg: '',
+};

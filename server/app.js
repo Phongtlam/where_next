@@ -64,7 +64,6 @@ app.post('/add', (req, res) => {
         placeImg: req.body.newAdd.placeImg,
       }
       let arr = JSON.parse(reply.favorites);
-      console.log('new add', newAdd)
       arr.push(newAdd);
       arr = JSON.stringify(arr);
       client.HMSET(req.body.username, {
