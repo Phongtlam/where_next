@@ -21,10 +21,7 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-        <div className="login">
-          <Auth getUsername={this.getUsername} />
-        </div>
-        <Gmap {...this.state} />
+        <Gmap {...this.state} getUsername={this.getUsername} />
       </div>
     );
   }

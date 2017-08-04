@@ -7,8 +7,8 @@ class Details extends React.Component {
   }
 
   onAdd() {
-    console.log('details', this.props.details)
     const details = this.props.details;
+    details.placeImg = this.props.placeImg;
     this.props.addToFavList(details);
     const baseUrl = (process.env.NODE_ENV === 'development') ? `${process.env.REACT_APP_URL}/add` : '/add';
     fetch(baseUrl, {

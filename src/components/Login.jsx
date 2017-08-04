@@ -31,8 +31,11 @@ class Login extends React.Component {
     })
     .then(data => data.json())
     .then((data) => {
-      console.log('data login  is', JSON.parse(data.favList));
       if (data) {
+        console.log(data)
+        // data = JSON.parse(data);
+        const favList = JSON.parse(data.favorites);
+        this.props.addToFavList(favList);
         this.props.openClose();
         this.props.getUsername(this.state.username);
         this.props.isWelcome();
@@ -45,7 +48,6 @@ class Login extends React.Component {
 
   onSignupSubmit(e) {
     e.preventDefault();
-    console.log('username password', this.state.username, this.state.password)
     const baseUrl = (process.env.NODE_ENV === 'development') ? `${process.env.REACT_APP_URL}/signup` : '/signup';
     fetch(baseUrl, {
       method: 'POST',
@@ -56,7 +58,6 @@ class Login extends React.Component {
         password: this.state.password,
       }),
     })
-    .then(data => data.json())
     .then((data) => {
       if (data) {
         this.props.openClose();
@@ -81,10 +82,6 @@ class Login extends React.Component {
       loginTab: false,
       signupTab: true,
     });
-  }
-
-  onLogin() {
-    console.log('hi')
   }
 
   onInputUsername(e) {

@@ -27,7 +27,12 @@ class Auth extends React.Component {
         onClick={this.openClose}
         className="search-button btn"
       >
-        {buttonLabel}</button>) : <Login {...this.props} isWelcome={this.isWelcome} openClose={this.openClose} />;
+        {buttonLabel}</button>) :
+      (<Login
+        {...this.props}
+        isWelcome={this.isWelcome}
+        openClose={this.openClose}
+      />);
     return (
       <div>
         {loginButton}

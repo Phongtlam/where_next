@@ -45,25 +45,34 @@ app.post('/signup', (req, res) => {
       res.status(404);
       res.end('error');
     } else {
+      let favorites = []
+      favorites = JSON.stringify(favorites);
       client.HMSET(req.body.username, {
         password: req.body.password,
+        favorites,
       });
+      res.end('good');
     }
   });
 });
 
 app.post('/add', (req, res) => {
-  console.log('body', req.body)
   client.hgetall(req.body.username, (err, reply) => {
     if (reply) {
-      reply[req.body.newAdd.name] = req.body.newAdd;
-      reply = JSON.stringify(reply);
+      const newAdd = {
+        name: req.body.newAdd.name,
+        placeImg: req.body.newAdd.placeImg,
+      }
+      let arr = JSON.parse(reply.favorites);
+      console.log('new add', newAdd)
+      arr.push(newAdd);
+      arr = JSON.stringify(arr);
       client.HMSET(req.body.username, {
-        favList: reply
+        favorites: arr,
       });
-      res.end(reply)
+      res.end('saved ok');
     }
-  })
+  });
 });
 
 module.exports = app;

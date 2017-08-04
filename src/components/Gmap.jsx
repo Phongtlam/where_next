@@ -1,5 +1,7 @@
 import React from 'react';
 import Details from './Details';
+import FavList from './FavList';
+import Auth from './Auth';
 
 const where_next = require('../where_next.png');
 
@@ -57,9 +59,11 @@ class Gmap extends React.Component {
     let query;
     if (typeof (place) !== 'string') {
       query = place.name;
-      this.setState({
-        placeImg: place.photos[0].getUrl({ maxWidth: 225, maxHeight: 178 }),
-      });
+      if (place.photos) {
+        this.setState({
+          placeImg: place.photos[0].getUrl({ maxWidth: 225, maxHeight: 178 }),
+        });
+      }
     } else {
       query = place;
       this.setState({
@@ -180,6 +184,9 @@ class Gmap extends React.Component {
       <Details {...this.state} {...this.props} addToFavList={this.addToFavList} /> : null;
     return (
       <div>
+        <div className="login">
+          <Auth getUsername={this.props.getUsername} addToFavList={this.addToFavList} />
+        </div>
         <div className="gmap" ref={this.setMapElementReference} />
         <div className="infowindow" ref={this.setInfoReference} />
         <form className="search" onSubmit={this.onSubmit}>
@@ -198,6 +205,15 @@ class Gmap extends React.Component {
           </div>
         </form>
         {details}
+        <div className="favorite container fav-list">
+          <div className="row text-center">
+            {this.state.favList.map((place, i) =>
+              (<div key={i} className="fav-col col-xs-3">
+                <FavList place={place} textSearch={this.textSearch} />
+              </div>),
+            )}
+          </div>
+        </div>
       </div>
     );
   }

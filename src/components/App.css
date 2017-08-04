@@ -99,3 +99,39 @@
   float: right;
   cursor: pointer;
 }
+
+.fav-list > .row {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.fav-list > .row > .col-xs-3 {
+  display: inline-block;
+  float: none;
+}
+
+.favorite {
+  position: fixed;
+  bottom: 200px;
+  width: 500px;
+  height: 60px;
+  clear: both;
+  margin-left: 75px;
+}
+
+.fav-img {
+  width: 100px;
+  cursor: pointer;
+}
+
+.fav-col {
+  float: left;
+  width: 100px;
+  margin: 30px;
+}
+
+.fav-container {
+  box-shadow: 5px 5px 5px #888888;
+  float: left;
+  background-color: white;
+  padding: 15px;
+}
