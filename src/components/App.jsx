@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 // import GmapContainer from './GmapContainer';
 import Gmap from './Gmap';
-import Auth from './Auth';
 
 import './App.css';
 
