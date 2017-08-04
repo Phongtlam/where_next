@@ -8,7 +8,21 @@ class Details extends React.Component {
 
   onAdd() {
     console.log('details', this.props.details)
-    this.props.addToFavList(this.props.details);
+    const details = this.props.details;
+    this.props.addToFavList(details);
+    const baseUrl = (process.env.NODE_ENV === 'development') ? `${process.env.REACT_APP_URL}/add` : '/add';
+    fetch(baseUrl, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: this.props.username,
+        newAdd: details,
+      }),
+    })
+    .catch((err) => {
+      throw ('err', err);
+    });
   }
 
   render() {
@@ -35,6 +49,7 @@ class Details extends React.Component {
         priceDisplay = 'unknown';
         break;
     }
+    const buttonLabel = this.props.username !== '' ? 'Save this place!' : 'Login/Signup to Save'
     return (
       <div className="details card">
         <img className="place-img card-img-top" src={this.props.placeImg} alt="location" />
@@ -46,7 +61,7 @@ class Details extends React.Component {
           </p>
           <button onClick={this.onAdd} className="faa-parent animated-hover btn-warning btn">
             <span className="faa-vertical animated-hover fa fa-thumbs-o-up" />
-            <span className="suggest"> Save this place!</span></button>
+            <span> {buttonLabel}</span></button>
         </div>
       </div>
     );

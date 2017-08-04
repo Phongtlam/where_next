@@ -8,7 +8,7 @@ class Login extends React.Component {
       signupTab: false,
       username: '',
       password: '',
-    }
+    };
     this.onLoginSubmit = this.onLoginSubmit.bind(this);
     this.onSignupSubmit = this.onSignupSubmit.bind(this);
     this.loginTab = this.loginTab.bind(this);
@@ -31,9 +31,11 @@ class Login extends React.Component {
     })
     .then(data => data.json())
     .then((data) => {
-      console.log('data is', data);
+      console.log('data login  is', JSON.parse(data.favList));
       if (data) {
         this.props.openClose();
+        this.props.getUsername(this.state.username);
+        this.props.isWelcome();
       }
     })
     .catch((err) => {
@@ -53,6 +55,14 @@ class Login extends React.Component {
         username: this.state.username,
         password: this.state.password,
       }),
+    })
+    .then(data => data.json())
+    .then((data) => {
+      if (data) {
+        this.props.openClose();
+        this.props.getUsername(this.state.username);
+        this.props.isWelcome();
+      }
     })
     .catch((err) => {
       throw ('err', err);

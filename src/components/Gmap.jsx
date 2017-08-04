@@ -177,7 +177,7 @@ class Gmap extends React.Component {
 
   render() {
     const details = this.state.details.name !== undefined ?
-      <Details {...this.state} addToFavList={this.addToFavList} /> : null;
+      <Details {...this.state} {...this.props} addToFavList={this.addToFavList} /> : null;
     return (
       <div>
         <div className="gmap" ref={this.setMapElementReference} />

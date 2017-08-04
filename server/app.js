@@ -40,7 +40,6 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/signup', (req, res) => {
-  console.log('insignup', req.body)
   client.hgetall(req.body.username, (err, reply) => {
     if (reply) {
       res.status(404);
@@ -53,27 +52,18 @@ app.post('/signup', (req, res) => {
   });
 });
 
-// app.post('/', (req, res) => {
-//   const shorten = shortid.generate();
-//   const orig = req.body.url;
-//   client.set(shorten, orig, () => {
-//     const retObj = { shorten, orig };
-//     res.end(JSON.stringify(retObj));
-//   });
-// });
-//
-// app.route('/:url').all((req, res) => {
-//   const shortUrl = req.params.url;
-//   client.get(shortUrl, (err, reply) => {
-//     if (reply) {
-//       // Redirect user to it
-//       res.redirect(reply);
-//     } else {
-//       // Confirm no such link in database
-//       res.status(404);
-//       res.end('error');
-//     }
-//   });
-// });
+app.post('/add', (req, res) => {
+  console.log('body', req.body)
+  client.hgetall(req.body.username, (err, reply) => {
+    if (reply) {
+      reply[req.body.newAdd.name] = req.body.newAdd;
+      reply = JSON.stringify(reply);
+      client.HMSET(req.body.username, {
+        favList: reply
+      });
+      res.end(reply)
+    }
+  })
+});
 
 module.exports = app;
