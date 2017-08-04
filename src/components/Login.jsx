@@ -32,8 +32,6 @@ class Login extends React.Component {
     .then(data => data.json())
     .then((data) => {
       if (data) {
-        console.log(data)
-        // data = JSON.parse(data);
         const favList = JSON.parse(data.favorites);
         this.props.addToFavList(favList);
         this.props.openClose();
