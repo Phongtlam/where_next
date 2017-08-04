@@ -1,7 +1,7 @@
 ## Where Next?
 
 # User Stories and Motivation:
-- Travelers often times do not know where to go in a new city. How can we help someone to quickly find places around San Francisco and beyond? Enter **Where Next**. This social platform enables someone to browse for places without the need to create a Yelp/Google account. This will feature places with user ratings, average cost(where applicable) and a few other features.
+- Travelers often times do not know where to go in a new city. How can we help someone to quickly find places around San Francisco and beyond? Enter [**Where Next**](https://wherenxt.herokuapp.com/). This social platform enables someone to browse for places without the need to create a Yelp/Google account. This will feature places with user ratings, average cost(where applicable) and a few other features.
 - The motivation behind this is to create an easy and seamless user experience without the need to create complicated profiles and login services.
 
 Link: https://wherenxt.herokuapp.com/
